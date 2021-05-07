@@ -1,0 +1,13 @@
+mysqldb:
+  ip: 127.0.0.1
+  port: 3306
+  db: honor_of_kings
+  user: root
+  passwd: mysql
+  auto_create_tables: True # 是否自动建表 建议当表不存在是设置为true，表存在是设置为false，加快软件启动速度
+
+redisdb:
+  ip: 127.0.0.1
+  port: 6379
+  db: 0
+  passwd:
