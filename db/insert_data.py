@@ -10,7 +10,7 @@ import json
 
 from db.db_mysql import MysqlDB
 from conf.config import config
-from utils.tools import del_none
+from utils.tools import del_none, change_html_2_wechat_tags
 
 
 def _insert_data(mysqldb, sql):
@@ -37,7 +37,7 @@ def hero_infos_table_values(values):
     return insert_hero_infos_table
 
 
-def hero_infos_table_values(values):
+def game_equipments_values(values):
     dict_hero = {}
     dict_hero['rowkey'] = values.get('item_id')
     dict_hero['item_id'] = values.get('item_id')
@@ -48,28 +48,40 @@ def hero_infos_table_values(values):
     dict_hero['des1'] = values.get('des1')
     dict_hero['des2'] = values.get('des2')
     hero_info = del_none(dict_hero)
+    dict_hero['des1'] = change_html_2_wechat_tags(dict_hero['des1'])
+    dict_hero['des2'] = change_html_2_wechat_tags(dict_hero['des2'])
     rowkey, item_id, item_name, item_type, price, total_price, des1, des2 = hero_info['rowkey'], hero_info['item_id'], \
-                                                                          hero_info['item_name'], hero_info['item_type'], \
-                                                                          hero_info['price'], hero_info[
-                                                                              'total_price'], hero_info['des1'], \
-                                                                          hero_info['des2']
+                                                                            hero_info['item_name'], hero_info[
+                                                                                'item_type'], \
+                                                                            hero_info['price'], hero_info[
+                                                                                'total_price'], hero_info['des1'], \
+                                                                            hero_info['des2']
     insert_hero_infos_table = f"""insert into game_equipments (rowkey, item_id, item_name, item_type, price, total_price, des1, des2) values ({rowkey}, {item_id}, '{item_name}', '{item_type}', '{price}', '{total_price}', '{des1}', '{des2}')"""
     return insert_hero_infos_table
-
-
 
 
 def insert_data():
     if config.get('mysqldb').get('auto_create_tables'):
         mysqldb = MysqlDB(**config.get('mysqldb'))
+
+        """英雄池数据库源数据"""
+        # with open("../json/hero_infos.json", encoding='utf-8') as rf:
+        #     result = rf.read()
+        # hero_infos = json.loads(result)
+        # for hero_info in hero_infos:
+        #
+        #     insert_hero_infos_table = hero_infos_table_values(hero_info)
+        #     _insert_data(mysqldb, insert_hero_infos_table)
+        #     print(insert_hero_infos_table)
+
+        """武器装备源数据"""
         with open("../json/game_equipments.json", encoding='utf-8') as rf:
             result = rf.read()
-        hero_infos = json.loads(result)
-        for hero_info in hero_infos:
-
-            insert_hero_infos_table = hero_infos_table_values(hero_info)
-            _insert_data(mysqldb, insert_hero_infos_table)
-            print(insert_hero_infos_table)
+        game_equipments = json.loads(result)
+        for game_equipment in game_equipments:
+            insert_game_equipments_table = game_equipments_values(game_equipment)
+            _insert_data(mysqldb, insert_game_equipments_table)
+            print(insert_game_equipments_table)
 
 
 if __name__ == '__main__':

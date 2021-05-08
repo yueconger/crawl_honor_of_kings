@@ -6,6 +6,7 @@
 @Email   : yueconger@163.com
 @Software: PyCharm
 """
+import re
 
 
 def del_none(item):
@@ -22,3 +23,15 @@ def del_none(item):
         else:
             item[k] = ""
     return item
+
+
+def change_html_2_wechat_tags(values):
+    result = ''
+    if values:
+        values = re.sub('<div>', '<view>', values)
+        values = re.sub('</div>', '</view>', values)
+        values = re.sub('<p>|<span>|<h\d+>', '<text>', values)
+        values = re.sub('</p>|</span>|</h\d+>', '</text>', values)
+        values = re.sub('<br>', '\n', values)
+        result = values
+    return result
